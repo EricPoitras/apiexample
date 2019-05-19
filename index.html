@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <title>Hello, world!</title>
+  </head>
+  <body>
+    <div class="container_fluid">
+        <div class="row justify-content-center">
+            <div class="col-auto">
+                <nav aria-label="Page navigation example">
+                  <ul class="pagination mt-3">
+                    <li id="btn_1" class="page-item disabled"><a class="page-link" href="#" onclick='return decrement()'>Previous</a></li>
+                    <li id="btn_2" class="page-item"><a class="page-link" href="#" onclick='return increment()'>Next</a></li>
+                  </ul>
+                </nav>
+            </div>
+        </div>
+        <div class="row">
+            <div id="container_1" class="col d-none"></div>
+            <div id="container_2" class="col d-none"></div>
+            <div id="container_3" class="col"></div>
+        </div>  
+    </div>  
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script>
+        var index_items = 0;
+        var APIdata;
+        
+        function GetJSON(){
+            fetch('https://jsonplaceholder.typicode.com/posts/1')
+  .then(response => response.json())
+  .then(function(json){
+                console.log(json); 
+                StoreAPIData(json);
+            })
+        }
+        
+        function GetAllJSON(){
+            fetch('https://jsonplaceholder.typicode.com/posts')
+  .then(response => response.json())
+  .then(function(json){
+                console.log(json);
+                StoreAPIData(json);
+            })
+        }
+        
+        function PostJSON(){
+            // POST adds a random id to the object sent
+fetch('https://jsonplaceholder.typicode.com/posts', {
+    method: 'POST',
+    body: JSON.stringify({
+      title: 'foo',
+      body: 'bar',
+      userId: 1
+    }),
+    headers: {
+      "Content-type": "application/json; charset=UTF-8"
+    }
+  })
+  .then(response => response.json())
+  .then(function(json){
+                console.log(json);
+            })
+
+/* will return
+{
+  id: 101,
+  title: 'foo',
+  body: 'bar',
+  userId: 1
+}
+*/
+        }
+        function UpdateJSON(){
+            fetch('https://jsonplaceholder.typicode.com/posts/1', {
+    method: 'PUT',
+    body: JSON.stringify({
+      id: 1,
+      title: 'foo',
+      body: 'bar',
+      userId: 1
+    }),
+    headers: {
+      "Content-type": "application/json; charset=UTF-8"
+    }
+  })
+  .then(response => response.json())
+  .then(json => console.log(json))
+
+/* will return
+{
+  id: 1,
+  title: 'foo',
+  body: 'bar',
+  userId: 1
+}
+*/
+
+        }
+        function UpdateJSON2(){
+            fetch('https://jsonplaceholder.typicode.com/posts/1', {
+    method: 'PATCH',
+    body: JSON.stringify({
+      title: 'foo'
+    }),
+    headers: {
+      "Content-type": "application/json; charset=UTF-8"
+    }
+  })
+  .then(response => response.json())
+  .then(json => console.log(json))
+
+/* will return
+{
+  id: 1,
+  title: 'foo',
+  body: 'quia et suscipit [...]',
+  userId: 1
+}
+*/
+        }
+        function DeleteJSON(){
+            fetch('https://jsonplaceholder.typicode.com/posts/1', {
+  method: 'DELETE'
+})
+        }
+        function FilterJSON(){
+            // Will return all the posts that belong to the first user
+fetch('https://jsonplaceholder.typicode.com/posts?userId=1')
+  .then(response => response.json())
+  .then(json => console.log(json))
+        }
+        function NestedJSON(){
+            // equivalent to /comments?postId=1
+fetch('https://jsonplaceholder.typicode.com/posts/1/comments')
+  .then(response => response.json())
+  .then(json => console.log(json))
+/*
+Listed of nested resources available
+https://jsonplaceholder.typicode.com/posts/1/comments
+https://jsonplaceholder.typicode.com/albums/1/photos
+https://jsonplaceholder.typicode.com/users/1/albums
+https://jsonplaceholder.typicode.com/users/1/todos
+https://jsonplaceholder.typicode.com/users/1/posts
+*/
+        }
+        function StoreAPIData(data){
+            APIdata = data;
+            ConstructHTMLElement();
+        }
+        function ConstructHTMLElement(){
+            var keys_length = Object.keys(APIdata).length;
+            var values_length = Object.values(APIdata).length;
+            var entries_length = Object.entries(APIdata).length;
+            var start_items = index_items*10;
+            var end_items = start_items+10;
+            
+            document.getElementById("container_1").innerHTML = "";
+            document.getElementById("container_2").innerHTML = "";
+            document.getElementById("container_3").innerHTML = "";
+            
+            var element1;
+            
+            for(i=start_items; i<end_items; i++){
+                element1 = "<ul>";
+                    for(j=0; j<4; j++){
+                        element1 += "<li>" + Object.keys(APIdata[i])[j] + "</li>";
+                    }
+                element1 += "</ul>";
+                //console.log(element1);
+                document.getElementById("container_1").innerHTML += element1;
+            }
+            
+            var element2;
+            
+            for(a=start_items; a<end_items; a++){
+                element2 = "<ul>";
+                    for(b=0; b<4; b++){
+                        element2 += "<li>" + Object.values(APIdata[a])[b] + "</li>";
+                    }
+                element2 += "</ul>";
+                //console.log(element2);
+                document.getElementById("container_2").innerHTML += element2;
+            }
+            
+            var element3;
+            
+            for(i=start_items; i<end_items; i++){
+                element3 = "<ul>";
+                    for(j=0; j<4; j++){
+                        element3 += "<li>" + Object.entries(APIdata[i])[j][0] + ": " + Object.entries(APIdata[i])[j][1] + "</li>";
+                    }
+                element3 += "</ul>";
+                //console.log(element3);
+                document.getElementById("container_3").innerHTML += element3;
+            }
+        }
+        
+        function decrement(){
+            index_items--;
+            ConstructHTMLElement();
+            console.log(index_items);
+            if(index_items <= 0){
+                document.getElementById("btn_1").classList.add("disabled");
+            }else{
+                document.getElementById("btn_1").classList.remove("disabled");
+            }
+            if(index_items >= (Object.keys(APIdata).length)/10-1){
+                document.getElementById("btn_2").classList.add("disabled");
+            }else{
+                document.getElementById("btn_2").classList.remove("disabled");
+            }
+        }
+        
+        function increment(){
+            index_items++;
+            ConstructHTMLElement();
+            console.log(index_items);
+            if(index_items <= 0){
+                document.getElementById("btn_1").classList.add("disabled");
+            }else{
+                document.getElementById("btn_1").classList.remove("disabled");
+            }
+            if(index_items >= (Object.keys(APIdata).length)/10-1){
+                document.getElementById("btn_2").classList.add("disabled");
+            }else{
+                document.getElementById("btn_2").classList.remove("disabled");
+            }
+        }
+        
+        GetAllJSON();
+        NestedJSON();
+        
+    </script>
+  </body>
+</html>
